@@ -108,6 +108,24 @@ func typeRune(r rune) {
 	case ',':
 		pressKey(0xBC)
 
+	case ':':
+		pressShiftCombo(0xBE)
+
+	case ';':
+		pressShiftCombo(0xBC)
+
+	case '?':
+		pressShiftCombo(0xBF)
+
+	case '!':
+		pressShiftCombo(0x31)
+
+	case '/':
+		pressKey(0xBF)
+
+	case '\\':
+		pressAltGrCombo(0xDC)
+
 	default:
 		if r >= 'a' && r <= 'z' {
 			pressKey(byte(r - 'a' + 'A'))
@@ -115,6 +133,17 @@ func typeRune(r rune) {
 			log.Printf("Unknown rune: %q (%d)\n", r, r)
 		}
 	}
+}
+
+func pressAltGrCombo(vk byte) {
+	procKeybdEv.Call(uintptr(0x11), 0, 0, 0)
+	procKeybdEv.Call(uintptr(0x12), 0, 0, 0)
+
+	procKeybdEv.Call(uintptr(vk), 0, 0, 0)
+	procKeybdEv.Call(uintptr(vk), 0, KEYEVENTF_KEYUP, 0)
+
+	procKeybdEv.Call(uintptr(0x12), 0, KEYEVENTF_KEYUP, 0)
+	procKeybdEv.Call(uintptr(0x11), 0, KEYEVENTF_KEYUP, 0)
 }
 
 func pressShiftCombo(vk byte) {
