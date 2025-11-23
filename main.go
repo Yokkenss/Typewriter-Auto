@@ -1,3 +1,5 @@
+//easy 6er bei Büsser
+
 package main
 
 import (
@@ -110,15 +112,13 @@ func typeRune(r rune) {
 }
 
 func pressShiftCombo(vk byte) {
-	// Press SHIFT DOWN
+
 	procKeybdEv.Call(uintptr(0x10), 0, 0, 0)
 	time.Sleep(2 * time.Millisecond)
 
-	// Press key
 	procKeybdEv.Call(uintptr(vk), 0, 0, 0)
 	procKeybdEv.Call(uintptr(vk), 0, KEYEVENTF_KEYUP, 0)
 
-	// Release SHIFT
 	procKeybdEv.Call(uintptr(0x10), 0, KEYEVENTF_KEYUP, 0)
 	time.Sleep(2 * time.Millisecond)
 }
