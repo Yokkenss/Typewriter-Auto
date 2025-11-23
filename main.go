@@ -1,4 +1,11 @@
-//easy 6er bei Büsser
+/*easy 6er bei Büsser
+__   __    _    _
+\ \ / /__ | | _| | _____ _ __  ___
+ \ V / _ \| |/ / |/ / _ \ '_ \/ __|
+  | | (_) |   <|   <  __/ | | \__ \
+  |_|\___/|_|\_\_|\_\___|_| |_|___/
+
+*/
 
 package main
 
@@ -58,10 +65,13 @@ func typeRune(r rune) {
 	}
 
 	switch r {
+	//special symbols
 	case ' ':
 		pressKey(0x20)
+
 	case 'ö':
 		pressKey(0xC0)
+
 	case 'Ö':
 		pressKeyDown(0x10)
 		pressKey(0xC0)
@@ -69,6 +79,7 @@ func typeRune(r rune) {
 
 	case 'ä':
 		pressKey(0xDE)
+
 	case 'Ä':
 		pressKeyDown(0x10)
 		pressKey(0xDE)
@@ -76,28 +87,23 @@ func typeRune(r rune) {
 
 	case 'ü':
 		pressKey(0xBA)
+
 	case 'Ü':
 		pressKeyDown(0x10)
 		pressKey(0xBA)
 		pressKeyUp(0x10)
 
+	case 'é':
+		pressDeadCombo(0xDE, 'E', false)
+
+	case 'è':
+		pressDeadCombo(0xC0, 'E', false)
+
+	case 'à':
+		pressDeadCombo(0xC0, 'A', false)
+
 	case '-':
 		pressKey(0xBD)
-
-	case 'a':
-		pressKey(0x41)
-	case 's':
-		pressKey(0x53)
-	case 'd':
-		pressKey(0x44)
-	case 'f':
-		pressKey(0x46)
-	case 'j':
-		pressKey(0x4A)
-	case 'k':
-		pressKey(0x4B)
-	case 'l':
-		pressKey(0x4C)
 
 	case '\n', '\r':
 		pressKey(0x0D)
@@ -192,6 +198,23 @@ func pressShiftCombo(vk byte) {
 
 	procKeybdEv.Call(uintptr(0x10), 0, KEYEVENTF_KEYUP, 0)
 	time.Sleep(2 * time.Millisecond)
+}
+
+func pressDeadCombo(deadVK byte, baseVK byte, baseShift bool) {
+	pressKey(deadVK)
+	time.Sleep(5 * time.Millisecond)
+
+	if baseShift {
+		pressKeyDown(0x10)
+		time.Sleep(1 * time.Millisecond)
+	}
+
+	pressKey(baseVK)
+
+	if baseShift {
+		time.Sleep(1 * time.Millisecond)
+		pressKeyUp(0x10)
+	}
 }
 
 func typeHandler(w http.ResponseWriter, r *http.Request) {
