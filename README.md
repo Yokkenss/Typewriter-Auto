@@ -38,6 +38,7 @@ Press: Ctrl + Shift + J
     `;
     panel.innerHTML = `
         <b>AutoTyper (Go)</b><br>
+        <br>
         Speed (ms): <input id="at_speed" type="number" value="70" min="20" max="500" style="width:60px"><br><br>
         <button id="at_start">Start</button>
         <button id="at_stop">Stop</button>
