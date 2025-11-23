@@ -156,6 +156,12 @@ func typeRune(r rune) {
 	case '9':
 		pressKey(0x39)
 
+	case '(':
+		pressShiftCombo(0x38)
+
+	case ')':
+		pressShiftCombo(0x39)
+
 	default:
 		if r >= 'a' && r <= 'z' {
 			pressKey(byte(r - 'a' + 'A'))
