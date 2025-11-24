@@ -17,7 +17,7 @@ and Open any typing exercise.
 ### 3. Inject the Browser Script
 
 1. Open DevTools Console
-Press: Ctrl + Shift + J
+Press: F12
 
 2. Copy this script:
 
