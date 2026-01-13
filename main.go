@@ -29,13 +29,8 @@ const (
 	KEYEVENTF_KEYUP = 0x0002
 )
 
-func pressKeyDown(vk byte) {
-	pressKeyEvent(vk, false)
-}
-
-func pressKeyUp(vk byte) {
-	pressKeyEvent(vk, true)
-}
+func pressKeyDown(vk byte) { pressKeyEvent(vk, false) }
+func pressKeyUp(vk byte)   { pressKeyEvent(vk, true) }
 
 func pressKeyEvent(vk byte, up bool) {
 	flags := uintptr(0)
@@ -52,131 +47,6 @@ func pressKey(vk byte) {
 	procKeybdEv.Call(uintptr(vk), 0, KEYEVENTF_KEYUP, 0)
 }
 
-func typeRune(r rune) {
-
-	if r == rune(160) {
-		pressKey(0x20)
-		return
-	}
-
-	if r >= 'A' && r <= 'Z' {
-		pressShiftCombo(byte(r))
-		return
-	}
-
-	switch r {
-	//special symbols
-	case ' ':
-		pressKey(0x20)
-
-	case 'ö':
-		pressKey(0xC0)
-
-	case 'Ö':
-		pressKeyDown(0x10)
-		pressKey(0xC0)
-		pressKeyUp(0x10)
-
-	case 'ä':
-		pressKey(0xDE)
-
-	case 'Ä':
-		pressKeyDown(0x10)
-		pressKey(0xDE)
-		pressKeyUp(0x10)
-
-	case 'ü':
-		pressKey(0xBA)
-
-	case 'Ü':
-		pressKeyDown(0x10)
-		pressKey(0xBA)
-		pressKeyUp(0x10)
-
-	case 'é':
-		pressDeadCombo(0xDE, 'E', false)
-
-	case 'è':
-		pressDeadCombo(0xC0, 'E', false)
-
-	case 'à':
-		pressDeadCombo(0xC0, 'A', false)
-
-	case '-':
-		pressKey(0xBD)
-
-	case '\n', '\r':
-		pressKey(0x0D)
-
-	case '.':
-		pressKey(0xBE)
-
-	case ',':
-		pressKey(0xBC)
-
-	case ':':
-		pressShiftCombo(0xBE)
-
-	case ';':
-		pressShiftCombo(0xBC)
-
-	case '?':
-		pressShiftCombo(0xBF)
-
-	case '!':
-		pressShiftCombo(0x31)
-
-	case '/':
-		pressKey(0xBF)
-
-	case '\\':
-		pressAltGrCombo(0xDC)
-
-	case '0':
-		pressKey(0x30)
-
-	case '1':
-		pressKey(0x31)
-
-	case '2':
-		pressKey(0x32)
-
-	case '3':
-		pressKey(0x33)
-
-	case '4':
-		pressKey(0x34)
-
-	case '5':
-		pressKey(0x35)
-
-	case '6':
-		pressKey(0x36)
-
-	case '7':
-		pressKey(0x37)
-
-	case '8':
-		pressKey(0x38)
-
-	case '9':
-		pressKey(0x39)
-
-	case '(':
-		pressShiftCombo(0x38)
-
-	case ')':
-		pressShiftCombo(0x39)
-
-	default:
-		if r >= 'a' && r <= 'z' {
-			pressKey(byte(r - 'a' + 'A'))
-		} else {
-			log.Printf("Unknown rune: %q (%d)\n", r, r)
-		}
-	}
-}
-
 func pressAltGrCombo(vk byte) {
 	procKeybdEv.Call(uintptr(0x11), 0, 0, 0)
 	procKeybdEv.Call(uintptr(0x12), 0, 0, 0)
@@ -189,7 +59,6 @@ func pressAltGrCombo(vk byte) {
 }
 
 func pressShiftCombo(vk byte) {
-
 	procKeybdEv.Call(uintptr(0x10), 0, 0, 0)
 	time.Sleep(2 * time.Millisecond)
 
@@ -217,11 +86,140 @@ func pressDeadCombo(deadVK byte, baseVK byte, baseShift bool) {
 	}
 }
 
+func typeRune(r rune) {
+
+	if r == rune(160) {
+		pressKey(0x20)
+		return
+	}
+
+	if r >= 'A' && r <= 'Z' {
+		pressShiftCombo(byte(r))
+		return
+	}
+
+	switch r {
+	//special symbols
+	case ' ':
+		pressKey(0x20)
+
+	// --- FIXED for Swiss German ISO (de-CH) ---
+	case 'ö':
+		pressKey(0xDE) // VK_OEM_7
+	case 'Ö':
+		pressKeyDown(0x10)
+		pressKey(0xDE)
+		pressKeyUp(0x10)
+
+	case 'ä':
+		pressKey(0xDC) // VK_OEM_5
+	case 'Ä':
+		pressKeyDown(0x10)
+		pressKey(0xDC)
+		pressKeyUp(0x10)
+
+	case 'ü':
+		pressKey(0xBA) // VK_OEM_1
+	case 'Ü':
+		pressKeyDown(0x10)
+		pressKey(0xBA)
+		pressKeyUp(0x10)
+
+	// accents (оставил как было у тебя)
+	case 'é':
+		pressDeadCombo(0xDE, 'E', false)
+	case 'è':
+		pressDeadCombo(0xC0, 'E', false)
+	case 'à':
+		pressDeadCombo(0xC0, 'A', false)
+
+	case '-':
+		pressKey(0xBD)
+
+	case '\n', '\r':
+		pressKey(0x0D)
+
+	case '.':
+		pressKey(0xBE)
+
+	case ',':
+		pressKey(0xBC)
+
+	case ':':
+		pressShiftCombo(0xBE)
+
+	case ';':
+		pressShiftCombo(0xBC)
+
+	case '?':
+		pressShiftCombo(0xBF)
+
+	// --- FIXED for Swiss German ISO (de-CH) ---
+	case '!':
+		pressShiftCombo(0xC0) // Shift + VK_OEM_3
+
+	case '/':
+		pressKey(0xBF)
+
+	case '\\':
+		pressAltGrCombo(0xDC)
+
+	case '0':
+		pressKey(0x30)
+	case '1':
+		pressKey(0x31)
+	case '2':
+		pressKey(0x32)
+	case '3':
+		pressKey(0x33)
+	case '4':
+		pressKey(0x34)
+	case '5':
+		pressKey(0x35)
+	case '6':
+		pressKey(0x36)
+	case '7':
+		pressKey(0x37)
+	case '8':
+		pressKey(0x38)
+	case '9':
+		pressKey(0x39)
+
+	case '(':
+		pressShiftCombo(0x38)
+	case ')':
+		pressShiftCombo(0x39)
+
+	default:
+		if r >= 'a' && r <= 'z' {
+			pressKey(byte(r - 'a' + 'A'))
+		} else {
+			log.Printf("Unknown rune: %q (%d)\n", r, r)
+		}
+	}
+}
+
 func typeHandler(w http.ResponseWriter, r *http.Request) {
+	origin := r.Header.Get("Origin")
+	if origin != "" {
+		w.Header().Set("Access-Control-Allow-Origin", origin)
+		w.Header().Set("Vary", "Origin")
+	} else {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+	}
+	w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+	if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
+
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -249,7 +247,7 @@ func main() {
 	http.HandleFunc("/type", typeHandler)
 
 	addr := ":9090"
-	fmt.Println("Typewriter AutoTyper by me")
+	fmt.Println("Typewriter AutoTyper by me (Swiss German ISO)")
 	fmt.Println("Listening on http://localhost" + addr + "/type")
 	fmt.Println("insert js script in console")
 
