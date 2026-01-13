@@ -88,6 +88,8 @@ func pressDeadCombo(deadVK byte, baseVK byte, baseShift bool) {
 
 func typeRune(r rune) {
 
+	const VK_CAPITAL = 0x14 // Caps Lock
+
 	if r == rune(160) {
 		pressKey(0x20)
 		return
@@ -107,23 +109,25 @@ func typeRune(r rune) {
 	case 'ö':
 		pressKey(0xDE) // VK_OEM_7
 	case 'Ö':
-		pressKeyDown(0x10)
-		pressKey(0xDE)
-		pressKeyUp(0x10)
+		pressKey(VK_CAPITAL)
+		pressKey(0xDE) // ö
+		pressKey(VK_CAPITAL)
+
+	case 'Ä':
+		pressKey(VK_CAPITAL)
+		pressKey(0xDC) // ä
+		pressKey(VK_CAPITAL)
+
+	case 'Ü':
+		pressKey(VK_CAPITAL)
+		pressKey(0xBA) // ü
+		pressKey(VK_CAPITAL)
 
 	case 'ä':
 		pressKey(0xDC) // VK_OEM_5
-	case 'Ä':
-		pressKeyDown(0x10)
-		pressKey(0xDC)
-		pressKeyUp(0x10)
 
 	case 'ü':
 		pressKey(0xBA) // VK_OEM_1
-	case 'Ü':
-		pressKeyDown(0x10)
-		pressKey(0xBA)
-		pressKeyUp(0x10)
 
 	// accents (оставил как было у тебя)
 	case 'é':
@@ -159,7 +163,7 @@ func typeRune(r rune) {
 		pressShiftCombo(0xC0) // Shift + VK_OEM_3
 
 	case '/':
-		pressKey(0xBF)
+		pressShiftCombo(0x37)
 
 	case '\\':
 		pressAltGrCombo(0xDC)
